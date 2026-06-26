@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>Heart Wish ❤️</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background:
+                linear-gradient(135deg,
+                    #fff1f3,
+                    #ffdce4);
+
+            height: 100vh;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: absolute;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .title {
+            font-size: 34px;
+            color: #d81b60;
+            text-align: center;
+        }
+
+        .sub {
+            margin-top: 20px;
+            color: #666;
+            padding: 0 25px;
+            text-align: center;
+        }
+
+        .btn {
+
+            margin-top: 30px;
+
+            padding: 18px 40px;
+
+            border: none;
+
+            border-radius: 50px;
+
+            background:
+                #ff4f79;
+
+            color: white;
+
+            font-size: 20px;
+
+        }
+
+        #game {
+            position: relative;
+        }
+
+        .meter {
+
+            position: absolute;
+
+            top: 20px;
+
+            left: 15px;
+
+            width: 200px;
+
+            height: 32px;
+
+            background: white;
+
+            border-radius: 50px;
+
+            padding: 5px;
+
+        }
+
+        .fill {
+
+            height: 100%;
+
+            width: 0;
+
+            background:
+                linear-gradient(90deg,
+                    #ff6b8f,
+                    #ff0055);
+
+            border-radius: 50px;
+
+        }
+
+        #basket {
+
+            position: absolute;
+
+            bottom: 50px;
+
+            width: 80px;
+
+            height: 50px;
+
+            font-size: 50px;
+
+        }
+
+        .heart {
+
+            position: absolute;
+
+            font-size: 30px;
+
+            animation: fall linear;
+
+        }
+
+        @keyframes fall {
+
+            from {
+                transform:
+                    translateY(-50px);
+            }
+
+            to {
+                transform:
+                    translateY(120vh);
+            }
+
+        }
+
+        #proposal {
+
+            text-align: center;
+
+            padding: 40px;
+        }
+
+        #yes {
+
+            background:
+                #ff3f6c;
+
+            color: white;
+
+        }
+
+        #no {
+
+            background: #777;
+
+            color: white;
+
+            position: relative;
+
+        }
+
+        #shootGame {
+            background: radial-gradient(circle, #ffe3e8 0%, #ffdce4 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #shootInfo {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #d81b60;
+            font-size: 16px;
+            z-index: 7;
+        }
+
+        #targetHeart {
+            position: absolute;
+            font-size: 80px;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: default;
+            z-index: 5;
+            animation: float 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) translateY(0px) scale(1); }
+            50% { transform: translate(-50%, -50%) translateY(-15px) scale(1.05); }
+            100% { transform: translate(-50%, -50%) translateY(0px) scale(1); }
+        }
+
+        #bowContainer {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px;
+            z-index: 10;
+        }
+
+        .arrow {
+            position: absolute;
+            font-size: 40px;
+            bottom: 70px;
+            z-index: 4;
+            transition: bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 6;
+            animation: explode 0.8s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+        }
+
+        .burst-stage {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 70px;
+            opacity: 0;
+            animation: burstFade 0.6s ease forwards;
+            z-index: 8;
+        }
+
+        @keyframes burstFade {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        #revealScreen {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .photo-frame {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            border: 8px solid white;
+            box-shadow: 0 8px 24px rgba(216, 27, 96, 0.2);
+            overflow: hidden;
+            margin-bottom: 20px;
+            transform: scale(0);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .action-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            min-height: 100px;
+            width: 100%;
+        }
+
+        #yesBtn {
+            background: #ff3f6c;
+            color: white;
+        }
+
+        #noBtn {
+            background: #777;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        #celebration {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .celebration-heart {
+            position: absolute;
+            font-size: 28px;
+            animation: floatUp 1s ease-out forwards;
+        }
+
+        #couplePreview {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 9;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #couplePreview.hidden {
+            display: none;
+        }
+
+        #couplePreview img {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid white;
+            box-shadow: 0 8px 24px rgba(216, 27, 96, 0.2);
+            margin-bottom: 15px;
+        }
+
+        #couplePreview p {
+            color: #d81b60;
+            font-size: 18px;
+            max-width: 320px;
+        }
+
+        #gameOverScreen {
+            text-align: center;
+            padding: 20px;
+        }
+
+        #gameOverScreen.hidden {
+            display: none;
+        }
+
+        .game-over-content {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .game-over-content h1 {
+            font-size: 32px;
+            color: #d81b60;
+            margin-bottom: 15px;
+        }
+
+        .game-over-content p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .game-over-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .game-over-buttons button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .game-over-buttons button:hover {
+            transform: scale(1.05);
+        }
+
+        #retryBtn {
+            background: #ff4f79;
+            color: white;
+        }
+
+        #exitBtn {
+            background: #777;
+            color: white;
+        }
+
+        @keyframes floatUp {
+            from {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-140px) scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        #meme {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 20px;
+            transition: transform .25s ease, opacity .25s ease;
+        }
+
+        #meme.fade {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        button {
+
+            padding: 15px 30px;
+
+            margin: 15px;
+
+            border: none;
+
+            border-radius: 50px;
+
+            font-size: 18px;
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="screen" id="intro">
+
+        <h1 class="title">
+
+            ❤️
+
+        </h1>
+
+        <h2 class="title">
+
+            Want To Know
+            My Heart Wish?
+
+        </h2>
+
+        <p class="sub">
+
+            Play the game and win ❤️
+
+            Catch enough love
+            to unlock it…
+
+        </p>
+
+        <button class="btn" onclick="startGame()">
+
+            Play Game 🎮
+
+        </button>
+
+    </div>
+
+    <div class="screen hidden" id="game">
+
+        <div class="meter">
+
+            ❤️ Love Meter
+
+            <div class="fill" id="fill">
+
+            </div>
+
+        </div>
+
+        <div id="basket">
+            🧺
+        </div>
+
+    </div>
+
+    <div class="screen hidden" id="proposal">
+
+        <img id="meme" src="./src/inital_meme.gif"
+width:180px;
+height:180px;
+object-fit:contain;
+border-radius:20px;
+">
+
+        <h1 id="title">
+
+            Do you love me? 🥺
+
+        </h1>
+
+        <p id="sub">
+
+            Aman tera hi hai ❤️
+
+        </p>
+
+        <button id="yes" onclick="yes()">
+
+            Yes ❤️
+
+        </button>
+
+        <button id="no" onclick="reject()">
+
+            No 🙈
+
+        </button>
+
+        <div id="msg"></div>
+
+    </div>
+
+    <div class="screen hidden" id="celebration">
+        <h1 style="font-size:42px; color:#ff3f6c; margin-bottom:20px;">I Love You ❤️</h1>
+        <p style="margin:0 auto 30px; max-width:320px; color:#666; font-size:18px; line-height:1.5;">
+            You said YES! If you want to be mine, play another game to keep the love going.
+        </p>
+        <button class="btn" onclick="killHeart()">
+            Kill the heart
+        </button>
+    </div>
+
+    <div class="screen hidden" id="shootGame" onclick="shootArrow()">
+        <div id="shootInfo">Round 1 of 3 — click when the arrow is below the heart</div>
+        <div id="targetHeart">❤️</div>
+        <div id="bowContainer">🏹</div>
+        <div id="couplePreview" class="hidden">
+            <img id="previewPhoto" src="./src/Couple_1.jpg" alt="Couple ❤️">
+            <p id="previewText">Great hit! Here's our first memory...</p>
+        </div>
+        <p style="position:absolute; bottom:10px; color:#d81b60; font-size:14px;">Click exactly when the arrow passes under the heart.</p>
+    </div>
+
+    <div class="screen hidden" id="gameOverScreen">
+        <div class="game-over-content">
+            <h1>💔 You Lost The Love Battle 💔</h1>
+            <p>The heart escaped! But don't worry, love never truly ends. Try again and prove your aim!</p>
+            <div class="game-over-buttons">
+                <button id="retryBtn" onclick="retryGameFromStart()">Retry 🏹</button>
+                <button id="exitBtn" onclick="exitToIntro()">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="screen hidden" id="revealScreen">
+        <div class="photo-frame">
+            <img id="couplePhoto" src="./src/Couple_2.jpg" alt="Our Picture ❤️">
+        </div>
+        <h1 id="proposalTitle">You hit the bullseye! 🎯</h1>
+        <p id="proposalSub" style="color:#666; margin:10px 0;">Ab toh haan bol de? 🥺</p>
+        <div class="action-btns">
+            <button id="yesBtn" onclick="acceptProposal()">Yes ❤️</button>
+            <button id="noBtn" onclick="runAway()">No 🙈</button>
+        </div>
+    </div>
+
+    <audio id="music" loop>
+
+        <source src="./sitaare.mp3">
+
+    </audio>
+
+  <script>
+    let score = 0;
+    let caught = 0;
+    let scale = 1;
+    let rejectCount = 0;
+
+    const basket = document.getElementById("basket");
+    const intro = document.getElementById("intro");
+    const game = document.getElementById("game");
+    const proposal = document.getElementById("proposal");
+    const music = document.getElementById("music");
+    const fill = document.getElementById("fill");
+
+    const yesButton = document.getElementById("yes");
+    const noButton = document.getElementById("no");
+    const msg = document.getElementById("msg");
+    const meme = document.getElementById("meme");
+    const titleEl = document.getElementById("title");
+    const sub = document.getElementById("sub");
+    const celebration = document.getElementById("celebration");
+    const shootGame = document.getElementById("shootGame");
+    const revealScreen = document.getElementById("revealScreen");
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const shootInfo = document.getElementById("shootInfo");
+    const targetHeart = document.getElementById("targetHeart");
+    const couplePreview = document.getElementById("couplePreview");
+    const previewPhoto = document.getElementById("previewPhoto");
+    const previewText = document.getElementById("previewText");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const proposalTitle = document.getElementById("proposalTitle");
+    const proposalSub = document.getElementById("proposalSub");
+    let isShooting = false;
+    let arrowElement = null;
+    let arrowInterval = null;
+    let arrowX = 10;
+    let arrowDirection = 1;
+    let roundCount = 0;
+    let missCount = 0;
+    let previewActive = false;
+    const maxRounds = 3;
+    const coupleImages = [
+        './src/Couple_1.jpg',
+        './src/Couple_2.jpg',
+        './src/Couple_3.jpg'
+    ];
+    const previewMessages = [
+        'A sweet memory flashes after your first hit...',
+        'Another lovely moment appears...',
+        'This one feels like forever...'
+    ];
+
+    // Array holds the upcoming sequence of rejections
+    const pages = [
+        {
+            img: "./src/meme1.gif",
+            title: "Soch le ache se! 😳",
+            sub: "Itne jaldi mat bol 🥺"
+        },
+        {
+            img: "./src/meme2.gif",
+            title: "Ek aur baar soch le 😭",
+            sub: "Kyu aisa kar rahi hai ❤️"
+        },
+        {
+            img: "./src/meme3.gif", // Make sure this image exists, or reuse an older one
+            title: "Last chance 😏",
+            sub: "Reject option disappearing..."
+        }
+    ];
+
+    function startGame() {
+        intro.classList.add("hidden");
+        game.classList.remove("hidden");
+        music.play();
+        spawn();
+    }
+
+    document.addEventListener("touchmove", e => {
+        basket.style.left = e.touches[0].clientX - 40 + "px";
+    });
+
+    function spawn() {
+        let x = Math.random() * (window.innerWidth - 50);
+        let h = document.createElement("div");
+        h.innerHTML = "❤️";
+        h.className = "heart";
+        h.style.left = x + "px";
+        h.style.animationDuration = "4s";
+        game.appendChild(h);
+
+        let y = -50;
+        let loop = setInterval(() => {
+            y += 8;
+            h.style.top = y + "px";
+
+            let bx = basket.offsetLeft;
+
+            if (y > window.innerHeight - 150 && x > bx - 40 && x < bx + 80) {
+                caught++;
+                score += 10;
+                fill.style.width = score + "%";
+                h.remove();
+                clearInterval(loop);
+            }
+
+            if (score >= 100) {
+                showProposal();
+                clearInterval(loop);
+            }
+
+            if (y > window.innerHeight) {
+                h.remove();
+                clearInterval(loop);
+            }
+        }, 30);
+
+        if (score < 100) {
+            setTimeout(spawn, 700);
+        }
+    }
+
+    function showProposal() {
+        game.classList.add("hidden");
+        proposal.classList.remove("hidden");
+    }
+
+    function reject() {
+        // Change to the next meme after the initial screen
+        if (rejectCount < pages.length - 1) {
+            const next = pages[rejectCount + 1];
+            meme.setAttribute("src", next.img);
+            titleEl.innerHTML = next.title;
+            sub.innerHTML = next.sub;
+        }
+
+        // Increase size of the YES button
+        scale += 0.35;
+        yesButton.style.transform = `scale(${scale})`;
+
+        // Move the NO button away
+        moveNo();
+
+        // Increment counter for the next click
+        rejectCount++;
+
+        // If limit reached, remove NO completely
+        if (rejectCount >= 3) {
+            noButton.style.display = "none";
+            sub.innerHTML = "Destiny selected YES ❤️";
+        }
+    }
+
+    function moveNo() {
+        noButton.style.position = "fixed";
+        noButton.style.left = (Math.random() * 60 + 10) + "vw";
+        noButton.style.top = (Math.random() * 60 + 20) + "vh";
+    }
+
+    function yes() {
+        proposal.classList.add("hidden");
+        celebration.classList.remove("hidden");
+        createHeartSplash(20);
+    }
+
+    function createHeartSplash(count) {
+        for (let i = 0; i < count; i++) {
+            const heart = document.createElement("div");
+            heart.className = "celebration-heart";
+            heart.textContent = "❤️";
+            heart.style.left = Math.random() * 80 + "vw";
+            heart.style.animationDelay = Math.random() * 0.5 + "s";
+            document.body.appendChild(heart);
+            heart.addEventListener("animationend", () => heart.remove());
+        }
+    }
+
+    function killHeart() {
+        celebration.classList.add('hidden');
+        shootGame.classList.remove('hidden');
+        targetHeart.style.display = 'block';
+        roundCount = 0;
+        missCount = 0;
+        previewActive = false;
+        startShootRound();
+    }
+
+    function startShootRound() {
+        clearArrow();
+        previewActive = false;
+        isShooting = false;
+        arrowX = 10;
+        arrowDirection = 1;
+        roundCount += 1;
+        shootInfo.textContent = `Round ${roundCount} of ${maxRounds} — click when arrow is under the heart`;
+        hidePreview();
+        createArrow();
+        targetHeart.style.display = 'block';
+        startArrowMovement();
+    }
+
+    function createArrow() {
+        if (arrowElement) arrowElement.remove();
+        arrowElement = document.createElement('div');
+        arrowElement.className = 'arrow';
+        arrowElement.innerHTML = '💘';
+        arrowElement.style.left = `${arrowX}vw`;
+        shootGame.appendChild(arrowElement);
+    }
+
+    function startArrowMovement() {
+        if (arrowInterval) clearInterval(arrowInterval);
+        arrowInterval = setInterval(() => {
+            arrowX += arrowDirection * 1.5;
+            if (arrowX <= 10 || arrowX >= 90) {
+                arrowDirection *= -1;
+            }
+            if (arrowElement) {
+                arrowElement.style.left = `${arrowX}vw`;
+            }
+        }, 20);
+    }
+
+    function clearArrow() {
+        if (arrowInterval) {
+            clearInterval(arrowInterval);
+            arrowInterval = null;
+        }
+        if (arrowElement) {
+            arrowElement.remove();
+            arrowElement = null;
+        }
+    }
+
+    function shootArrow() {
+        if (isShooting || previewActive || !arrowElement) return;
+        isShooting = true;
+        clearInterval(arrowInterval);
+
+        const arrowRect = arrowElement.getBoundingClientRect();
+        const heartRect = targetHeart.getBoundingClientRect();
+        const arrowCenter = arrowRect.left + arrowRect.width / 2;
+        const heartCenter = heartRect.left + heartRect.width / 2;
+        const hit = Math.abs(arrowCenter - heartCenter) < 45;
+
+        arrowElement.style.bottom = '80vh';
+
+        setTimeout(() => {
+            if (hit) {
+                onHit();
+            } else {
+                onMiss();
+            }
+            clearArrow();
+        }, 420);
+    }
+
+    function onHit() {
+        showBurstStages();
+        showPreview();
+        targetHeart.style.opacity = '0';
+        setTimeout(() => {
+            if (roundCount >= maxRounds) {
+                hidePreview();
+                shootGame.classList.add('hidden');
+                revealScreen.classList.remove('hidden');
+            } else {
+                hidePreview();
+                targetHeart.style.opacity = '1';
+                startShootRound();
+            }
+        }, 3200);
+    }
+
+    function onMiss() {
+        playMissSound();
+        missCount++;
+        if (missCount >= maxRounds) {
+            shootInfo.textContent = 'Game Over! All chances used. The heart escaped!';
+            setTimeout(() => {
+                shootGame.classList.add('hidden');
+                gameOverScreen.classList.remove('hidden');
+            }, 1200);
+        } else {
+            shootInfo.textContent = `Missed! (${maxRounds - missCount} chances left) Wait for the arrow to line up...`;
+            setTimeout(() => {
+                isShooting = false;
+                createArrow();
+                startArrowMovement();
+            }, 800);
+        }
+    }
+
+    function showBurstStages() {
+        const burstSymbols = ['💘', '💗', '💖', '💞', '❤️'];
+        const stageCount = 3;
+        let index = 0;
+        const burstEl = document.createElement('div');
+        burstEl.className = 'burst-stage';
+        shootGame.appendChild(burstEl);
+
+        function nextStage() {
+            if (index >= stageCount) {
+                burstEl.remove();
+                return;
+            }
+            burstEl.textContent = burstSymbols[index];
+            index += 1;
+            setTimeout(nextStage, 700);
+        }
+
+        nextStage();
+    }
+
+    function showPreview() {
+        previewActive = true;
+        const previewIndex = Math.min(roundCount - 1, coupleImages.length - 1);
+        previewPhoto.src = coupleImages[previewIndex];
+        previewText.innerText = previewMessages[previewIndex];
+        couplePreview.classList.remove('hidden');
+        // keep the final reveal image updated as well
+        const finalImage = document.getElementById('couplePhoto');
+        if (finalImage) finalImage.src = coupleImages[previewIndex];
+    }
+
+    function hidePreview() {
+        previewActive = false;
+        couplePreview.classList.add('hidden');
+    }
+
+    function playMissSound() {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+        osc.stop(audioCtx.currentTime + 0.25);
+    }
+
+    function runAway() {
+        if (rejectCount < 3) {
+            const responses = [
+                { title: 'Galat nishana! 😳', sub: 'Dobara soch lo acche se...' },
+                { title: 'Nahi chalega! 😭', sub: 'Dil todne ka jurm lagega tumpe' },
+                { title: 'Last chance... 😏', sub: 'Ab toh option hi gayab hone wala hai' }
+            ];
+            proposalTitle.innerHTML = responses[rejectCount].title;
+            proposalSub.innerHTML = responses[rejectCount].sub;
+        }
+
+        scale += 0.35;
+        yesBtn.style.transform = `scale(${scale})`;
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = (Math.random() * 60 + 10) + 'vw';
+        noBtn.style.top = (Math.random() * 60 + 20) + 'vh';
+        rejectCount++;
+
+        if (rejectCount >= 3) {
+            noBtn.style.display = 'none';
+            proposalSub.innerHTML = 'Destiny has chosen YES! ❤️';
+        }
+    }
+
+    function acceptProposal() {
+        document.body.innerHTML = `
+            <div style="height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:30px;">
+                <div>
+                    <h1 style="color:#ff3f6c; font-size:42px; margin-bottom:15px;">❤️ KNEW IT! ❤️</h1>
+                    <h2>You are stuck with me forever now! 💖</h2>
+                    <p style="margin-top: 15px; color:#555;">Unlimited cuddles and coffee unlocked! ☕✨</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function retryGameFromStart() {
+        gameOverScreen.classList.add('hidden');
+        celebration.classList.remove('hidden');
+        roundCount = 0;
+        missCount = 0;
+        previewActive = false;
+        targetHeart.style.opacity = '1';
+        hidePreview();
+        clearArrow();
+    }
+
+    function exitToIntro() {
+        location.reload();
+    }
+</script>
+
+</body>
+
+</html>
